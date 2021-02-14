@@ -19,6 +19,9 @@ has languages => sub { c() };
 has endnotes  => sub { c() };
 has last_row  => 30;
 
+# After which column the columns must be collapsed?
+has collapse_after => 2;
+
 sub make_rows($self) {
     my $matrix = $self->texts->map(
         sub($f) {
@@ -29,10 +32,15 @@ sub make_rows($self) {
     #the first language is the leading so we count where it ends
     my $last_row = $self->last_row;
     my $columns  = int @$matrix / 12;
+    my $after    = $self->collapse_after;
     $matrix->each(
         sub ($txt, $num) {
             my $lang  = $self->languages->[$num - 1];
             my $count = 0;
+
+            # Class to be applied to the columns depending on after which
+            # column the rest should be collapsed initially.
+            my $exlapse = $num > $after ? 'collapse' : 'expand';
             foreach my $r (0 .. @$txt - 1) {
                 last if $count == $last_row;
                 $count++;
@@ -47,15 +55,16 @@ sub make_rows($self) {
                 # Each language goes to its own column.
                 if ($r > 0) {
                     $txt->[$r] = <<~"TXT";
-                <td lang="$lang" class="$lang$num">
-                    <p class="expand ">$txt->[$r]</p>
+                <td lang="$lang" class="$exlapse $lang$num">
+                    <p class="$exlapse">$txt->[$r]</p>
                 </td>
                 TXT
                 }
                 else {
                     $txt->[$r] = <<~"TXT";
-                <th lang="$lang" class="$lang$num">
-                    <p class="expand">
+                <th lang="$lang" class="$exlapse $lang$num">
+                    <h3 class="$exlapse">($lang) $txt->[$r]</h3>
+                    <p class="$exlapse">
                     <button class="button icon-only exlapse $lang$num" title="сгъни/разгъни">↭</button>
                     <button class="button icon-only to-left $lang$num" title="премести наляво">⮄</button>
                     <button class="button icon-only to-right $lang$num" title="премести надясно">⮆</button><br>
@@ -64,7 +73,6 @@ sub make_rows($self) {
                         <option value="cu">Bukyvede</option>
                     </select>
                     </p>
-                    <h3 class="expand">($lang) $txt->[$r]</h3>
                 </th>
                 TXT
                 }
@@ -74,8 +82,8 @@ sub make_rows($self) {
             my @endnotes = @$txt[$last_row .. @$txt - 1];
             my $endnotes =
               c(@endnotes)->map(sub { $_ =~ /Bele|Беле|Приме|Pozn/ ? () : $_ })
-              ->compact->join('</p><p class="expand">');
-            $endnotes = qq|<p class="expand">$endnotes</p>|;
+              ->compact->join(qq|</p><p class="$exlapse">|);
+            $endnotes = qq|<p class="$exlapse">$endnotes</p>|;
             $endnotes
               =~ s|(\d+)\.\s|<a id="n_${num}_$1" href="#l_${num}_$1">$1. ↑</a> |gmsx;
 
@@ -172,7 +180,6 @@ sub make_html($self) {
 
   <h1 id="txt">${\ $self->title }</h1>
   <table id="xapli">
-    <caption>За буквите на различни езици и наречия</caption>
   ${\ $all->join($/) }
   </table>
   </body>
@@ -188,10 +195,11 @@ HTML
 
 sub run ($self, @args) {
     getopt \@args,
-      't|texts=s@'     => \(my $texts     = []),
-      'l|languages=s@' => \(my $languages = []),
-      'r|last_row=i'   => \(my $last_row  = $self->last_row),
-      'title=s'        => \(my $title     = $self->title);
+      't|texts=s@'         => \(my $texts     = []),
+      'l|languages=s@'     => \(my $languages = []),
+      'r|last_row=i'       => \(my $last_row  = $self->last_row),
+      'title=s'            => \(my $title     = $self->title),
+      'c|collapse_after=i' => \(my $after     = $self->collapse_after);
     @$texts or die 'Nothing to do! Please provide text files via --texts or -t!';
     @$languages
       or die
@@ -203,8 +211,7 @@ sub run ($self, @args) {
 
     # sleep 1;
     return $self->last_row($last_row)->title($title)->texts(c(@$texts))
-      ->languages(c(@$languages))->make_html();
-
+      ->collapse_after($after)->languages(c(@$languages))->make_html();
 }
 
 
@@ -233,7 +240,7 @@ Texts2Html - put texts in different languages together side by side for displayi
     -l 'cu,ru,ru,sr,cs' \
     -t 'o-pismenech-cs2bg.txt,o-pismeneh-bg2cz.txt' \
     -l 'cs,bg' \
-    -r 31 > o-pismeneh-all.html
+    -c 1 -r 31 > o-pismeneh-all.html
 
 =head1 DESCRIPTION
 

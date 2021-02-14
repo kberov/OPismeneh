@@ -1,6 +1,7 @@
 $(function($){
     /**
-     * Toggles expanded and collapsed state of a paragraph or h3 in a column in the table
+     * Toggles expanded and collapsed state of a paragraph or h3 in a column in
+     * the table.
      */
     $('.exlapse').click(function(e) {
         // get all elements with this button's last class
@@ -10,17 +11,17 @@ $(function($){
         $(`td.${clss},th.${clss}`).each(function() {
             if($('p', this).hasClass('expand')) {
                 $('p,h3', this).removeClass('expand').addClass('collapse')
-                $(this).attr({width: '2rem'})
+                $(this).removeClass('expand').addClass('collapse')
             }
             else {
                 $('p,h3', this).removeClass('collapse').addClass('expand')
-                $(this).attr({width: '40rem'})
+                $(this).removeClass('collapse').addClass('expand')
             }
         })
     });
 
     /**
-     * Moves a column to the left
+     * Moves a column to the left.
      */
     $('.to-left').click(function(e) {
         // get all elements with this button's last class
@@ -35,7 +36,7 @@ $(function($){
     });
 
     /**
-     * Moves a column to the right
+     * Moves a column to the right.
      */
     $('.to-right').click(function(e) {
         // get all elements with this button's last class
@@ -50,7 +51,7 @@ $(function($){
     });
 
     /**
-     * Switches font according to the selected fornt
+     * Switches font according to the selected class.
      */
     $('select').change(function() {
         let clss = $(this).attr('class')
@@ -61,7 +62,7 @@ $(function($){
     });
 
     /**
-     *  Change initially selected font depending on the language
+     *  Change initially selected font depending on the language.
      */
     $('select[class^="cu"]').val('cu').trigger('change')
 });
