@@ -63,6 +63,5 @@ $(function($){
     /**
      *  Change initially selected font depending on the language
      */
-    $('select[lang="cu"]').val('cu')
-    $('select[lang!="cu"]').val('normal')
+    $('select[class^="cu"]').val('cu').trigger('change')
 });
