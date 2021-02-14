@@ -28,7 +28,7 @@ sub make_rows($self) {
 
     #the first language is the leading so we count where it ends
     my $last_row = $self->last_row;
-    my $columns  = int @$matrix/12;
+    my $columns  = int @$matrix / 12;
     $matrix->each(
         sub ($txt, $num) {
             my $lang  = $self->languages->[$num - 1];
@@ -40,19 +40,20 @@ sub make_rows($self) {
                 next if $txt->[$r] =~ /^#/;
 
                 # link to endnote
-                $txt->[$r] =~ s|\[(\d+)\]|<sup><a id="l_${num}_$1" href="#n_${num}_$1">$1</a></sup>|gx;
+                $txt->[$r]
+                  =~ s|\[(\d+)\]|<sup><a id="l_${num}_$1" href="#n_${num}_$1">$1</a></sup>|gx;
 
                 # wrap with html
                 # Each language goes to its own column.
-                if($r > 0){
-                $txt->[$r] = <<~"TXT";
+                if ($r > 0) {
+                    $txt->[$r] = <<~"TXT";
                 <td lang="$lang" class="$lang$num">
                     <p class="expand ">$txt->[$r]</p>
                 </td>
                 TXT
                 }
                 else {
-                $txt->[$r] = <<~"TXT";
+                    $txt->[$r] = <<~"TXT";
                 <th lang="$lang" class="$lang$num">
                     <p class="expand">
                     <button class="button icon-only exlapse $lang$num" title="сгъни/разгъни">↭</button>
@@ -68,13 +69,19 @@ sub make_rows($self) {
                 TXT
                 }
             }
+
             # Prepare all end-notes as one row
-            my @endnotes = @$txt[$last_row .. @$txt-1];
-            my $endnotes  = c(@endnotes)->map(sub{$_=~/Bele|Беле|Приме|Pozn/?():$_})->compact->join('</p><p class="expand">');
+            my @endnotes = @$txt[$last_row .. @$txt - 1];
+            my $endnotes =
+              c(@endnotes)->map(sub { $_ =~ /Bele|Беле|Приме|Pozn/ ? () : $_ })
+              ->compact->join('</p><p class="expand">');
             $endnotes = qq|<p class="expand">$endnotes</p>|;
-            $endnotes =~ s|(\d+)\.\s|<a id="n_${num}_$1" href="#l_${num}_$1">$1. ↑</a> |gmsx;
-            # push @{$self->endnotes}, qq|<div class="col" lang="$lang">$endnotes</div>|;
-            push @{$self->endnotes}, qq|<td lang="$lang" class="$lang$num">$endnotes</td>|;
+            $endnotes
+              =~ s|(\d+)\.\s|<a id="n_${num}_$1" href="#l_${num}_$1">$1. ↑</a> |gmsx;
+
+           # push @{$self->endnotes}, qq|<div class="col" lang="$lang">$endnotes</div>|;
+            push @{$self->endnotes},
+              qq|<td lang="$lang" class="$lang$num">$endnotes</td>|;
             return;
         }
     );
@@ -94,12 +101,14 @@ sub make_rows($self) {
             $rows[$c] .= $matrix->[$col][$r];
         }
         $rows[$c] = qq|<tr>$/$rows[$c]$/</tr>|;
+
         # warn $rows[$c];
         # sleep 1;
         $c++;
     }
+
     # add endnotes as last row of the big table
-    push @rows, '<tr>' .$/. $self->endnotes->join($/) . $/ . '</tr>';
+    push @rows, '<tr>' . $/ . $self->endnotes->join($/) . $/ . '</tr>';
     return c(@rows);
 }
 
@@ -107,7 +116,7 @@ sub make_rows($self) {
 # Prepares html from collected ednotes.
 # Obsolete
 sub endnotes_html($self) {
-    return  qq|<div class="row">$/${\$self->endnotes->join("\n")}$/</div>|;
+    return qq|<div class="row">$/${\$self->endnotes->join("\n")}$/</div>|;
 }
 
 sub make_html($self) {
@@ -190,7 +199,8 @@ sub run ($self, @args) {
     $texts     = [split /,\s*?/, join(',', @$texts)];
     $languages = [split /,\s*?/, join(',', @$languages)];
     @$texts == @$languages or die 'Text files and languages must have equal length!';
-    STDERR->say( "Last row to be processed is $last_row. Default: ${\$self->last_row}.");
+    STDERR->say("Last row to be processed is $last_row. Default: ${\$self->last_row}.");
+
     # sleep 1;
     return $self->last_row($last_row)->title($title)->texts(c(@$texts))
       ->languages(c(@$languages))->make_html();
