@@ -40,7 +40,7 @@ sub make_rows($self) {
                 next if $txt->[$r] =~ /^#/;
 
                 # link to endnote
-                $txt->[$r] =~ s|\[(\d+)\]|<sup><a id="l_${num}_$1" href="#n_${num}_$1">[$1]</a></sup>|gx;
+                $txt->[$r] =~ s|\[(\d+)\]|<sup><a id="l_${num}_$1" href="#n_${num}_$1">$1</a></sup>|gx;
 
                 # wrap with html
                 # Each language goes to its own column.
@@ -70,7 +70,7 @@ sub make_rows($self) {
             }
             # Prepare all end-notes as one row
             my @endnotes = @$txt[$last_row .. @$txt-1];
-            my $endnotes  = c(@endnotes)->map(sub{$_=~/Беле|Приме|Pozn/?():$_})->compact->join('</p><p class="expand">');
+            my $endnotes  = c(@endnotes)->map(sub{$_=~/Bele|Беле|Приме|Pozn/?():$_})->compact->join('</p><p class="expand">');
             $endnotes = qq|<p class="expand">$endnotes</p>|;
             $endnotes =~ s|(\d+)\.\s|<a id="n_${num}_$1" href="#l_${num}_$1">$1. ↑</a> |gmsx;
             # push @{$self->endnotes}, qq|<div class="col" lang="$lang">$endnotes</div>|;
@@ -226,7 +226,8 @@ Texts2Html - put texts in different languages together side by side for displayi
     -r 31 > o-pismeneh-all.html
 
 =head1 DESCRIPTION
-gets two (or more) text files and puts them together in diple,triple... hexaple
+
+Gets two (or more) text files and puts them together in diple,triple... hexaple
 to comapare them in HTML. Returns the output on the STDOUT. You can redirect it
 to a file your self.
 
