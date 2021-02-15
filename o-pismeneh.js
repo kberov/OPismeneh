@@ -9,7 +9,7 @@ $(function($){
         let clss = classes[classes.length-1]
 
         $(`td.${clss},th.${clss}`).each(function() {
-            if($('p', this).hasClass('expand')) {
+            if($(this).hasClass('expand')) {
                 $('p,h3', this).removeClass('expand').addClass('collapse')
                 $(this).removeClass('expand').addClass('collapse')
             }
@@ -64,5 +64,6 @@ $(function($){
     /**
      *  Change initially selected font depending on the language.
      */
-    $('select[class^="cu"]').val('cu').trigger('change')
+    $('select[lang="cu"]').val('cu').trigger('change')
+    $('select[lang!="cu"]').val('normal').trigger('change')
 });

@@ -63,16 +63,17 @@ sub make_rows($self) {
                 else {
                     $txt->[$r] = <<~"TXT";
                 <th lang="$lang" class="$exlapse $lang$num">
-                    <h3 class="$exlapse">($lang) $txt->[$r]</h3>
                     <p class="$exlapse">
                     <button class="button icon-only exlapse $lang$num" title="сгъни/разгъни">↭</button>
                     <button class="button icon-only to-left $lang$num" title="премести наляво">⮄</button>
                     <button class="button icon-only to-right $lang$num" title="премести надясно">⮆</button><br>
-                    <select class="$lang$num">
+                    <select lang="$lang" class="$lang$num">
+                        <option value=""></option>
                         <option value="normal">Veleka</option>
                         <option value="cu">Bukyvede</option>
                     </select>
                     </p>
+                    <h3 class="$exlapse">($lang) $txt->[$r]</h3>
                 </th>
                 TXT
                 }
@@ -140,18 +141,19 @@ sub make_html($self) {
     <link rel="stylesheet" href="https://слово.бг/css/fonts.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <title>${\ $self->title }…</title>
+  </head>
+  <body>
+<hr />
+
+
     <style>
-    .row {
-       /* max-width:100% !important;*/
-        margin:auto
-        }
     table#xapli th,
     table#xapli td {
             vertical-align:top;
             width: 40rem;
             max-height:35rem;
     }
-    .collapse, .expand, .mv-left, .mv-right {
+    .exlapse .mv-left, .mv-right {
         font-size:2rem;
     }
     .expand {
@@ -159,31 +161,28 @@ sub make_html($self) {
         overflow: auto;
     }
     .collapse {
-        width: 2em;
-        height: 1.8em;
+        width: 2.1em;
+        height: 2.3em;
         text-overflow: ellipsis; 
         overflow: hidden;
     }
 
 
-    .cu, [class^="cu"], [lang="cu"]  {
+    .cu {
         /* font-family: BukyvedeRegular;*/
-        font-family: Bukyvede !important;
+        font-family: Bukyvede;
     }
 
-    .normal, [lang="ru"], [lang="bg"], [lang="mk"], [lang="sr"], [lang="cs"] {
+    .normal {
         font-family: Veleka;
     }
     </style>
-  </head>
-  <body>
-
-  <h1 id="txt">${\ $self->title }</h1>
+  <h2 id="txt">${\ $self->title }</h2>
   <table id="xapli">
   ${\ $all->join($/) }
   </table>
-  </body>
   <script src="o-pismeneh.js"></script>
+  </body>
 </html>
 HTML
 
