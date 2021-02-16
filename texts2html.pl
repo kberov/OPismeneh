@@ -19,6 +19,10 @@ has languages => sub { c() };
 has endnotes  => sub { c() };
 has last_row  => 30;
 
+# Buttons for showing hiding columns. The functionality is attached to them by
+# o-pismeneh.js during loading of the page.
+has buttons => sub { c() };
+
 # After which column the columns must be collapsed?
 has collapse_after => 2;
 
@@ -37,10 +41,20 @@ sub make_rows($self) {
         sub ($txt, $num) {
             my $lang  = $self->languages->[$num - 1];
             my $count = 0;
+            my $exlapse;
+            if ($num <= $after) {
 
-            # Class to be applied to the columns depending on after which
-            # column the rest should be collapsed initially.
-            my $exlapse = $num > $after ? 'collapse' : 'expand';
+                # Class to be applied to the columns depending on after which
+                # column the rest should be collapsed initially.
+                $exlapse = 'expand';
+                push @{$self->buttons},
+                  qq|<button class="button primary" for="$lang$num">$num ($lang)</button>|;
+            }
+            else {
+                $exlapse = 'collapse';
+                push @{$self->buttons},
+                  qq|<button class="button" for="$lang$num">$num ($lang)</button>|;
+            }
             foreach my $r (0 .. @$txt - 1) {
                 last if $count == $last_row;
                 $count++;
@@ -73,7 +87,7 @@ sub make_rows($self) {
                         <option value="cu">Bukyvede</option>
                     </select>
                     </p>
-                    <h3 class="$exlapse">($lang) $txt->[$r]</h3>
+                    <h3 class="$exlapse">$num ($lang) $txt->[$r]</h3>
                 </th>
                 TXT
                 }
@@ -139,7 +153,7 @@ sub make_html($self) {
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://слово.бг/css/malka/chota_all_min.css">
     <link rel="stylesheet" href="https://слово.бг/css/fonts.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://слово.бг/mojo/jquery/jquery.js"></script>
     <title>${\ $self->title }…</title>
   </head>
   <body>
@@ -150,20 +164,19 @@ sub make_html($self) {
     table#xapli th,
     table#xapli td {
             vertical-align:top;
-            width: 40rem;
             max-height:35rem;
     }
     .exlapse .mv-left, .mv-right {
         font-size:2rem;
     }
     .expand {
-        width: 40rem;
+        min-width: 40rem;
         overflow: auto;
     }
     .collapse {
         width: 2.1em;
         height: 2.3em;
-        text-overflow: ellipsis; 
+        text-overflow: ellipsis;
         overflow: hidden;
     }
 
@@ -178,6 +191,7 @@ sub make_html($self) {
     }
     </style>
   <h2 id="txt">${\ $self->title }</h2>
+  <nav id="column_buttons">${\$self->buttons->join()}</nav>
   <table id="xapli">
   ${\ $all->join($/) }
   </table>
@@ -239,7 +253,7 @@ Texts2Html - put texts in different languages together side by side for displayi
     -l 'cu,ru,ru,sr,cs' \
     -t 'o-pismenech-cs2bg.txt,o-pismeneh-bg2cz.txt' \
     -l 'cs,bg' \
-    -c 1 -r 31 > o-pismeneh-all.html
+    -c 2 -r 31 > o-pismeneh-all.html
 
 =head1 DESCRIPTION
 

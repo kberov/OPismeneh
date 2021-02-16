@@ -3,9 +3,11 @@ $(function($){
      * Toggles expanded and collapsed state of a paragraph or h3 in a column in
      * the table.
      */
-    $('.exlapse').click(function(e) {
+    $('#xapli .exlapse').click(function(e) {
         // get all elements with this button's last class
         let classes = $(e.target).attr('class').split(/\s+/)
+        // get the last class which is the same for all the cells in the
+        // collumn and does not change ever.
         let clss = classes[classes.length-1]
 
         $(`td.${clss},th.${clss}`).each(function() {
@@ -23,14 +25,14 @@ $(function($){
     /**
      * Moves a column to the left.
      */
-    $('.to-left').click(function(e) {
+    $('#xapli .to-left').click(function(e) {
         // get all elements with this button's last class
         let classes = $(e.target).attr('class').split(/\s+/)
         let clss = classes[classes.length-1]
 
         $(`td.${clss},th.${clss}`).each(function() {
-            // get the sibling before this element
-            let left = $(this).prev()
+            // get the first from right to left visible sibling before this element
+            let left = $(this).prevAll(':visible').get(0)
             $(this).insertBefore(left)
         })
     });
@@ -38,14 +40,14 @@ $(function($){
     /**
      * Moves a column to the right.
      */
-    $('.to-right').click(function(e) {
+    $('#xapli .to-right').click(function(e) {
         // get all elements with this button's last class
         let classes = $(e.target).attr('class').split(/\s+/)
         let clss = classes[classes.length-1]
 
         $(`td.${clss},th.${clss}`).each(function() {
-            // get the sibling after this element
-            let right = $(this).next()
+            // get the first visible sibling after this element
+            let right = $(this).nextAll(':visible').get(0)
             $(this).insertAfter(right)
         })
     });
@@ -53,7 +55,7 @@ $(function($){
     /**
      * Switches font according to the selected class.
      */
-    $('select').change(function() {
+    $('#xapli select').change(function() {
         let clss = $(this).attr('class')
         let newClass = $(this).val()
         $(`td.${clss},th.${clss}`).each(function() {
@@ -64,6 +66,29 @@ $(function($){
     /**
      *  Change initially selected font depending on the language.
      */
-    $('select[lang="cu"]').val('cu').trigger('change')
-    $('select[lang!="cu"]').val('normal').trigger('change')
+    $('#xapli select[lang="cu"]').val('cu').trigger('change')
+    $('#xapli select[lang!="cu"]').val('normal').trigger('change')
+
+    /**
+     * Hide all columns which buttons are not primary. Make it visible for the
+     * user. Then attach the toggling functionality to all buttons.
+     */
+    $('#column_buttons button').each(function() {
+        let button = $(this);
+        let clss = button.attr('for')
+        //alert($(this).attr('class'))
+        if(!button.attr('class').match(/primary/)) {
+            $(`th.${clss},td.${clss}`).toggle('slow')
+        }
+
+        button.click(function() {
+            if(button.attr('class').match(/primary/)) {
+                button.removeClass('primary')
+            }
+            else {
+                button.addClass('primary')
+            }
+            $(`th.${clss},td.${clss}`).toggle('slow')
+        })
+    })
 });
