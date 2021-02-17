@@ -13,7 +13,7 @@ BEGIN {
 no warnings 'redefine';
 local *Data::Dumper::qquote  = sub {qq["${\(shift)}"]};
 local $Data::Dumper::Useperl = 1;
-has title     => 'За буквите на различни езици и наречия';
+has title     => 'За буквите на различни словѣнски наречия';
 has texts     => sub { c() };
 has languages => sub { c() };
 has endnotes  => sub { c() };
@@ -37,21 +37,21 @@ sub make_rows($self) {
     my $last_row = $self->last_row;
     my $columns  = int @$matrix / 12;
     my $after    = $self->collapse_after;
+    my $exlapse  = 'expand';
     $matrix->each(
         sub ($txt, $num) {
             my $lang  = $self->languages->[$num - 1];
             my $count = 0;
-            my $exlapse;
             if ($num <= $after) {
 
                 # Class to be applied to the columns depending on after which
                 # column the rest should be collapsed initially.
-                $exlapse = 'expand';
+                # $exlapse = 'expand';
                 push @{$self->buttons},
                   qq|<button class="button primary" for="$lang$num">$num ($lang)</button>|;
             }
             else {
-                $exlapse = 'collapse';
+                # $exlapse = 'collapse';
                 push @{$self->buttons},
                   qq|<button class="button" for="$lang$num">$num ($lang)</button>|;
             }
@@ -104,7 +104,7 @@ sub make_rows($self) {
 
            # push @{$self->endnotes}, qq|<div class="col" lang="$lang">$endnotes</div>|;
             push @{$self->endnotes},
-              qq|<td lang="$lang" class="$lang$num">$endnotes</td>|;
+              qq|<td lang="$lang" class="$exlapse $lang$num">$endnotes</td>|;
             return;
         }
     );
@@ -159,40 +159,36 @@ sub make_html($self) {
   <body>
 <hr />
 
-
-    <style>
+  <style>
     table#xapli th,
     table#xapli td {
-            vertical-align:top;
-            max-height:35rem;
+      vertical-align:top;
+      max-height:35rem;
     }
     .exlapse .mv-left, .mv-right {
-        font-size:2rem;
+      font-size:2rem;
     }
     .expand {
-        min-width: 40rem;
-        overflow: auto;
+      min-width: 40rem;
+      overflow: auto;
     }
     .collapse {
-        width: 2.1em;
-        height: 2.3em;
-        text-overflow: ellipsis;
-        overflow: hidden;
+      width: 2.1em;
+      height: 2.3em;
+      text-overflow: ellipsis;
+      overflow: hidden;
     }
-
-
     .cu {
-        /* font-family: BukyvedeRegular;*/
-        font-family: Bukyvede;
+    /* font-family: BukyvedeRegular;*/
+      font-family: Bukyvede;
     }
-
     .normal {
-        font-family: Veleka;
+      font-family: Veleka;
     }
-    </style>
+  </style>
   <h2 id="txt">${\ $self->title }</h2>
-  <nav id="column_buttons">${\$self->buttons->join()}</nav>
   <table id="xapli">
+    <caption id="column_buttons">${\$self->buttons->join()}</caption>
   ${\ $all->join($/) }
   </table>
   <script src="o-pismeneh.js"></script>
