@@ -91,4 +91,26 @@ $(function($){
             $(`th.${clss},td.${clss}`).toggle('slow')
         })
     })
+
+    /**
+     * Fix scrolling between endnotes and targets.
+     */
+    $('a[href^="\#"]').click(function(e) {
+        e.preventDefault()
+        let id = $($(this).attr("href"))
+        let top = id.offset().top
+        let header_height = $('header').outerHeight() + 16
+
+        let scroll = 300, fade = 300, delay = 500
+
+        $('html,body').animate({scrollTop: top - header_height }, scroll)
+        if(id.attr('id').match(/^n_/)) {
+            id.parent().delay(delay).fadeOut(fade).fadeIn(fade)
+            id.delay(delay + fade).fadeOut(fade).fadeIn(fade)
+        }
+        else {
+            id.parent().parent().delay(delay).fadeOut(fade).fadeIn(fade)
+            id.delay(delay + fade).fadeOut(fade).fadeIn(fade)
+        }
+    });
 });
