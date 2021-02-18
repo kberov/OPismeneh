@@ -157,13 +157,22 @@ sub make_html($self) {
     <title>${\ $self->title }…</title>
   </head>
   <body>
-<hr />
+<header class="is-fixed bg-dark row">
+  <h2 id="txt">${\ $self->title }</h2>
+</header>
 
   <style>
+    main.container {
+        max-width:90%;
+    }
     table#xapli th,
     table#xapli td {
       vertical-align:top;
       max-height:35rem;
+    }
+    table#xapli button {
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
     }
     .exlapse .mv-left, .mv-right {
       font-size:2rem;
