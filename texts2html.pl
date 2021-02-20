@@ -256,8 +256,8 @@ Texts2Html - put texts in different languages together side by side for displayi
     -l 'cu,bg,bg,bg,mk' \
     -t 'o-pismeneh-cu1.txt,o-pismenah-ru.txt,o-pismenah-ru1.txt,o-pismenima-sr.txt,o-pismenech-cs.txt' \
     -l 'cu,ru,ru,sr,cs' \
-    -t 'o-pismenech-cs2bg.txt,o-pismeneh-bg2cz.txt' \
-    -l 'cs,bg' \
+    -t 'o-pismenech-cs2bg.txt,o-pismeneh-bg2cz.txt,o-pismeneh-uk.txt' \
+    -l 'cs,bg,uk' \
     -c 2 -r 31 > o-pismeneh-all.html
 
 =head1 DESCRIPTION
