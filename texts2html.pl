@@ -178,7 +178,7 @@ sub make_html($self) {
       font-size:2rem;
     }
     .expand {
-      min-width: 40rem;
+      min-width: 20rem;
       overflow: auto;
     }
     .collapse {
