@@ -168,6 +168,10 @@ sub make_html($self) {
     table#xapli td {
       vertical-align:top;
       max-height:35rem;
+      -moz-user-select: none;
+      -webkit-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
     }
     table#xapli button {
       padding: 0.5rem 1rem;
