@@ -93,7 +93,7 @@ sub make_rows($self) {
                 }
             }
 
-            # Prepare all end-notes as one row
+            # Prepare all end-notes as one table row
             my @endnotes = @$txt[$last_row .. @$txt - 1];
             my $endnotes =
               c(@endnotes)->map(sub { $_ =~ /Bele|Беле|Приме|Pozn/ ? () : $_ })
@@ -102,7 +102,6 @@ sub make_rows($self) {
             $endnotes
               =~ s|(\d+)\.\s|<a id="n_${num}_$1" href="#l_${num}_$1">$1. ↑</a> |gmsx;
 
-           # push @{$self->endnotes}, qq|<div class="col" lang="$lang">$endnotes</div>|;
             push @{$self->endnotes},
               qq|<td lang="$lang" class="$exlapse $lang$num">$endnotes</td>|;
             return;
