@@ -4,6 +4,7 @@ use Mojo::Base -base, -signatures;
 use Mojo::Util qw(decode encode getopt dumper);
 use Mojo::File qw(path);
 use Mojo::Collection qw(c);
+use Text::Wrap qw(wrap);
 
 BEGIN {
     binmode STDOUT => ':utf8';
@@ -42,6 +43,7 @@ sub make_rows($self) {
         sub ($txt, $num) {
             my $lang  = $self->languages->[$num - 1];
             my $count = 0;
+            my $style_hide = '';
             if ($num <= $after) {
 
                 # Class to be applied to the columns depending on after which
@@ -54,6 +56,7 @@ sub make_rows($self) {
                 # $exlapse = 'collapse';
                 push @{$self->buttons},
                   qq|<button class="button" for="$lang$num">$num ($lang)</button>|;
+                $style_hide = ' style="display:none"';
             }
             foreach my $r (0 .. @$txt - 1) {
                 last if $count == $last_row;
@@ -69,14 +72,14 @@ sub make_rows($self) {
                 # Each language goes to its own column.
                 if ($r > 0) {
                     $txt->[$r] = <<~"TXT";
-                <td lang="$lang" class="$exlapse $lang$num">
-                    <p class="$exlapse">$txt->[$r]</p>
+                <td lang="$lang" class="$exlapse $lang$num" $style_hide>
+                    <p class="$exlapse">${\ wrap('', '', $txt->[$r])}</p>
                 </td>
                 TXT
                 }
                 else {
                     $txt->[$r] = <<~"TXT";
-                <th lang="$lang" class="$exlapse $lang$num">
+                <th lang="$lang" class="$exlapse $lang$num" $style_hide>
                     <p class="$exlapse">
                     <button class="button icon-only exlapse $lang$num" title="сгъни/разгъни">↭</button>
                     <button class="button icon-only to-left $lang$num" title="премести наляво">⮄</button>
@@ -98,12 +101,11 @@ sub make_rows($self) {
             my $endnotes =
               c(@endnotes)->map(sub { $_ =~ /Bele|Беле|Приме|Pozn/ ? () : $_ })
               ->compact->join(qq|</p><p class="$exlapse">|);
-            $endnotes = qq|<p class="$exlapse">$endnotes</p>|;
+            $endnotes = qq|<p class="$exlapse">$endnotes</p>$/|;
             $endnotes
               =~ s|(\d+)\.\s|<a id="n_${num}_$1" href="#l_${num}_$1">$1. ↑</a> |gmsx;
-
             push @{$self->endnotes},
-              qq|<td lang="$lang" class="$exlapse $lang$num">$endnotes</td>|;
+              qq|<td lang="$lang" class="$exlapse $lang$num" $style_hide>${\ wrap('', '', $endnotes)}</td>$/|;
             return;
         }
     );
@@ -200,7 +202,7 @@ sub make_html($self) {
   </style>
   <h2 id="txt">${\ $self->title }</h2>
   <table id="xapli">
-    <caption id="column_buttons">${\$self->buttons->join()}</caption>
+    <caption id="column_buttons">${\$self->buttons->join($/)}</caption>
   ${\ $all->join($/) }
   </table>
   <script src="o-pismeneh.js"></script>

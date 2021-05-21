@@ -74,15 +74,17 @@ $(function($){
     /**
      * Hide all columns which buttons are not primary. Make it visible for the
      * user. Then attach the toggling functionality to all buttons.
+     * For some reason this approach stopped working, so hiding the columns initially in HTML, not here.
      */
     $('#column_buttons button').each(function() {
         let button = $(this);
         let clss = button.attr('for')
-        //alert($(this).attr('class'))
+       /*
+        alert($(this).attr('class'))
         if(!button.attr('class').match(/primary/)) {
             $(`th.${clss},td.${clss}`).toggle('slow')
         }
-
+       */
         button.click(function() {
             if(button.attr('class').match(/primary/)) {
                 button.removeClass('primary')
@@ -117,11 +119,11 @@ $(function($){
 
     /**
      * Prevent most key combinations on the page as well as dragging, selecting and context menu
-     */
     document.onkeydown = function(e) {
       if(event.ctrlKey || event.shiftKey) {
         return false
       }
     }
     document.oncontextmenu = document.ondragstart = document.onselectstart = function() { return false;}
+     */
 });
