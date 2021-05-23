@@ -73,7 +73,9 @@ sub make_rows($self) {
                 if ($r > 0) {
                     $txt->[$r] = <<~"TXT";
                 <td lang="$lang" class="$exlapse $lang$num" $style_hide>
-                    <p class="$exlapse">${\ wrap('', '', $txt->[$r])}</p>
+                    <p class="$exlapse">
+                    ${\ wrap('', '', $txt->[$r])}
+                    </p>
                 </td>
                 TXT
                 }
@@ -105,7 +107,7 @@ sub make_rows($self) {
             $endnotes
               =~ s|(\d+)\.\s|<a id="n_${num}_$1" href="#l_${num}_$1">$1. ↑</a> |gmsx;
             push @{$self->endnotes},
-              qq|<td lang="$lang" class="$exlapse $lang$num" $style_hide>${\ wrap('', '', $endnotes)}</td>$/|;
+              qq|<td lang="$lang" class="$exlapse $lang$num" $style_hide>$/${\ wrap('', '', $endnotes)}$/</td>$/|;
             return;
         }
     );
@@ -257,8 +259,8 @@ Texts2Html - put texts in different languages together side by side for displayi
   texts2html.pl --texts='file1.txt,file2.txt,file3.txt' -l 'uc,bg,ru'
 
   ./texts2html.pl \
-    -t 'o-pismeneh-cu.txt,o-pisneneh-cu-1348.txt,o-pismeneh-bg-1944.txt,o-pismeneh-bg.txt,o-pismeneh-bg-nw.txt,o-pismeneh-mk.txt' \
-    -l 'cu,cu,bg,bg,bg,mk' \
+    -t 'o-pismeneh-cu.txt,o-pisneneh-cu-1348.txt,o-pismeneh-bg-1944.txt,o-pismeneh-bg.txt,o-pismeneh-bg-nw.txt,o-pismeneh-mk.txt,o-pismeneh-bg-bn.txt' \
+    -l 'cu,cu,bg,bg,bg,mk,bg' \
     -t 'o-pismeneh-cu1.txt,o-pismenah-ru.txt,o-pismenah-ru1.txt,o-pismenima-sr.txt,o-pismenech-cs.txt' \
     -l 'cu,ru,ru,sr,cs' \
     -t 'o-pismenech-cs2bg.txt,o-pismeneh-bg2cz.txt,o-pismeneh-uk.txt' \
